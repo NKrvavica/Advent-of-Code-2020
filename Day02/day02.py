@@ -26,13 +26,13 @@ for line in lines:
     if (password[first-1] == letter) ^ (password[second-1] == letter):
         counter_p2 += 1
 
-print(f'First part. Number of valid passwords:{counter_p1}')
-print(f'Second part. Number of valid passwords:{counter_p2}')
+print(f'First part. Number of valid passwords: {counter_p1}')
+print(f'Second part. Number of valid passwords: {counter_p2}')
 
 
 # NOTE!
 # alternative option for parsing input line
 # import re
-# words =re.compile(r'\w+')
+# words = re.compile(r'\w+')
 # low, high, letter, password = re.findall(words, line)
 # low, high = int(low), int(high)
