@@ -40,25 +40,24 @@ passports = parse_input(lines)
 # part 1
 passport_without_cid = passports.drop(['cid'], axis=1) # ignore 'cid'
 passports['valid'] = passport_without_cid.isnull().sum(axis=1) == False
-valid_pass = passports[passports['valid'] == True]
+valid_pass = passports[passports['valid']]
 print(f'Solution to part 1. Valid passports: {len(valid_pass)}')
 
 # part 2
 valid_pass = valid_pass.convert_dtypes()
+num_columns = ['byr', 'iyr', 'eyr']
+valid_pass[num_columns] = valid_pass[num_columns].apply(pd.to_numeric)
 
-valid_pass['byr'] = pd.to_numeric(valid_pass['byr'], errors='coerce')
 valid_pass = valid_pass[valid_pass['byr'].between(1920, 2002)]
 
-valid_pass['iyr'] = pd.to_numeric(valid_pass['iyr'], errors='coerce')
 valid_pass = valid_pass[valid_pass['iyr'].between(2010, 2020)]
 
-valid_pass['eyr'] = pd.to_numeric(valid_pass['eyr'], errors='coerce')
 valid_pass = valid_pass[valid_pass['eyr'].between(2020, 2030)]
 
 valid_pass = valid_pass[valid_pass['hgt'].str.contains('cm|in', regex=True)]
 valid_pass[['hgt_unit']] = valid_pass['hgt'].str[-2:]
 valid_pass[['hgt_value']] = valid_pass['hgt'].str[:-2]
-valid_pass['hgt_value'] = pd.to_numeric(valid_pass['hgt_value'], errors='coerce')
+valid_pass['hgt_value'] = pd.to_numeric(valid_pass['hgt_value'])
 valid_cm_height = ((valid_pass['hgt_value'].between(150, 193)) & (valid_pass['hgt_unit']=='cm'))
 valid_in_height = ((valid_pass['hgt_value'].between(59, 76)) & (valid_pass['hgt_unit']=='in'))
 valid_pass = valid_pass[valid_cm_height | valid_in_height]
