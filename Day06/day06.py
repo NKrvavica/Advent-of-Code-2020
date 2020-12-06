@@ -20,7 +20,7 @@ for groups_answers in declaration_form:
     # part 2: questions that were answered yes by all group members
     all_yeses = group_answered_yes
     for person_answers in groups_answers.split('\n'):
-        all_yeses = set(person_answers) & all_yeses
+        all_yeses &= set(person_answers)
     total_all_yeses += len(all_yeses)
 
 
