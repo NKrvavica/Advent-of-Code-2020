@@ -5,8 +5,6 @@ Created on Mon Dec  7 11:53:30 2020
 @author: PC-KRVAVICA
 """
 
-from collections import defaultdict
-
 with open('input.txt') as f:
     rules = f.read().split('\n')
 
@@ -33,7 +31,7 @@ p1 = len(good_bags)
 
 # part 2 - completely unrelated to part 1
 # build the bag
-all_bags = defaultdict()
+all_bags = {}
 for rule in rules:
     rule = rule.replace(' bags', '')
     rule = rule.replace(' bag', '')
