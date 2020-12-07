@@ -8,28 +8,7 @@ Created on Mon Dec  7 11:53:30 2020
 with open('input.txt') as f:
     rules = f.read().split('\n')
 
-p1, p2 = 0, 0
 
-# part 1
-good_bags = set()
-finished = False
-while not finished:
-    count = len(good_bags)
-    for rule in rules:
-        rule = rule.replace(' bags', '')
-        rule = rule.replace(' bag', '')
-        rule = rule.replace('.', '')
-        parent_bag, children_bags = rule.split(' contain ')
-        for bag in children_bags.split(', '):
-            if bag[2:] == 'shiny gold' or bag[2:] in good_bags:
-                good_bags.add(parent_bag)
-    if count == len(good_bags):
-        finished = True
-
-p1 = len(good_bags)
-
-
-# part 2 - completely unrelated to part 1
 # build the bag
 all_bags = {}
 for rule in rules:
@@ -44,7 +23,21 @@ for rule in rules:
     all_bags['other'] = []
     all_bags['other.'] = []
 
+# part 1
+good_bags = set()
+finished = False
+while not finished:
+    count = len(good_bags)
+    for parent_bag in all_bags:
+        for bag in all_bags[parent_bag]:
+            if bag[1] == 'shiny gold' or bag[1] in good_bags:
+                good_bags.add(parent_bag)
+    if count == len(good_bags):
+        finished = True
 
+p1 = len(good_bags)
+
+# part 2 (recursion)
 def bag_inception(parent_bag):
     counter = 0
     for bag in all_bags[parent_bag]:
