@@ -10,8 +10,8 @@ import pandas as pd
 # load data
 with open('./input.txt', 'r') as f:
     program = f.read().split('\n')
-    
 program_len = len(program)
+
 
 # run the program
 def run_program(program, program_len):
@@ -47,27 +47,26 @@ print(f'Solution to part 1: {accumulator} \n')
 
 
 # part 2
-def attempt_brute_forces_changes(program):
-    program_len = len(program)
+def attempt_brute_forces_changes(program, program_len):
     for i, row in enumerate(program):
 
+        # change nop or jmp value
         if row[:3] == 'nop':
-            program_copy = program.copy()
-            program_copy[i] = 'jmp' + row[3:]
+            program[i] = 'jmp' + row[3:]
             # print(f'attempt changing line {i}, from nop to jmp')
         elif row[:3] == 'jmp':
-            program_copy = program.copy()
-            program_copy[i] = 'nop' + row[3:]
+            program[i] = 'nop' + row[3:]
             # print(f'attempt changing line {i}, from jmp to nop,')
         else:
             continue
 
-        accumulator, idx = run_program(program_copy, program_len)
-        # print(f'program terminated at line {idx}')
+        accumulator, idx = run_program(program, program_len)
 
         if idx >= program_len:
             return accumulator
+        else:
+            program[i] = row  # return the original value
 
 
-accumulator = attempt_brute_forces_changes(program)
+accumulator = attempt_brute_forces_changes(program, program_len)
 print(f'Solution to part 2: {accumulator}')
