@@ -5,9 +5,7 @@ Created on Wed Dec  9 08:23:06 2020
 @author: Nino
 """
 
-
 from itertools import combinations
-from time import time
 
 
 def parse_input(fname):
@@ -18,9 +16,9 @@ def parse_input(fname):
 
 
 def find_invalid_number(data, length):
-    for i, number in enumerate(data[length:], length):
+    for i, number in enumerate(data[length:]):
         possible_sums = set()
-        preamble = data[i-length:i]
+        preamble = data[i:i+length]
         for two_num in combinations(preamble, 2):
             possible_sums.add(sum(two_num))
         if number not in possible_sums:
@@ -29,12 +27,12 @@ def find_invalid_number(data, length):
 
 def search(data, invalid_number):
     for i, number in enumerate(data):
-        cont = [number]
-        for numb in data[i+1:]:
-            cont.append(numb)
-            if sum(cont) == invalid_number:
-                return cont
-            elif sum(cont) > invalid_number:
+        sum_cont = number
+        for j, numb in enumerate(data[i+1:], i+1):
+            sum_cont += numb
+            if sum_cont == invalid_number:
+                return data[i:j]
+            elif sum_cont > invalid_number:
                 break
 
 
