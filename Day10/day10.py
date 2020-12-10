@@ -16,7 +16,7 @@ def parse_input(fname):
 
 
 def find_differences(adapters):
-    outlet, device = [0], [max(adapters) + 3]
+    outlet, device = [0], [adapters[-1] + 3]
     chain = outlet + adapters + device
     chain_diff = np.diff(chain)
     unique, counts = np.unique(chain_diff, return_counts=True)
@@ -26,7 +26,7 @@ def find_differences(adapters):
 def compute_permutations(chain_diff):
     '''
     number of consequtive 1s between two 3s are related to the number
-    of permutations as:
+    of permutations as (Lazy caterer's sequence):
     (n-1) * n / 2 + 1,
     where n is the number of consecutive 1s, and 1s and 3s are the differences
     between numbers in the list.
@@ -55,3 +55,14 @@ print(f'Solution to part 1: {p1}')
 # part 2
 p2 = compute_permutations(chain_diff)
 print(f'Solution to part 2: {p2}')
+
+
+# alternative part 2
+from collections import Counter
+adapters.sort(reverse=True)
+chain = adapters + [0]
+ways = Counter([adapters[0] + 3])
+for ch in chain:
+    ways[ch] = ways[ch+3] + ways[ch+2] + ways[ch+1]
+p2 = ways[0]
+print(f'Solution to part 2 (alternative way): {p2}')
