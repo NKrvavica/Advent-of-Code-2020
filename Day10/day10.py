@@ -24,19 +24,10 @@ def find_differences(adapters):
 
 
 def compute_permutations(chain_diff):
-    '''
-    number of consequtive 1s between two 3s are related to the number
-    of permutations as (Lazy caterer's sequence):
-    (n-1) * n / 2 + 1,
-    where n is the number of consecutive 1s, and 1s and 3s are the differences
-    between numbers in the list.
-    (this took 3 pieces of paper, and one hour to figure out...)'
-
-    '''
     nr_ones, permutations = 0, 1
-    for diff in chain_diff:
+    for i, diff in enumerate(chain_diff):
         if diff == 3:
-            permutations *= (nr_ones - 1) * nr_ones / 2 + 1
+            permutations *= TRIBONACCI[nr_ones]
             nr_ones = 0
         elif diff == 1:
             nr_ones += 1
@@ -53,6 +44,7 @@ p1 = counts[0] * counts[1]
 print(f'Solution to part 1: {p1}')
 
 # part 2
+TRIBONACCI = [1, 1, 2, 4, 7, 13, 24, 44]
 p2 = compute_permutations(chain_diff)
 print(f'Solution to part 2: {p2}')
 
