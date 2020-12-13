@@ -5,6 +5,8 @@ Created on Sun Dec 13 08:50:08 2020
 @author: Nino
 """
 
+from functools import reduce
+
 
 # earliest = 939
 # note = '7,13,x,x,59,x,31,19'
@@ -45,10 +47,7 @@ def part1(earliest, list_of_buses):
 
 '''I copied the main function for the chinese remainder theorem:
     https://en.wikipedia.org/wiki/Chinese_remainder_theorem
-I had to modify it because of overflow issues when computing the
-product of all input values (n)
 '''
-from functools import reduce
 def chinese_remainder(n, a):
     sums = 0
     prod = reduce(lambda a, b: a*b, n) # product of all elements in the list
