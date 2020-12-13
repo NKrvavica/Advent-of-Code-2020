@@ -5,8 +5,6 @@ Created on Sun Dec 13 08:50:08 2020
 @author: Nino
 """
 
-import numpy as np
-
 
 # earliest = 939
 # note = '7,13,x,x,59,x,31,19'
@@ -47,13 +45,13 @@ def part1(earliest, list_of_buses):
 
 '''I copied the main function for the chinese remainder theorem:
     https://en.wikipedia.org/wiki/Chinese_remainder_theorem
-first I had to modify it because of overflow issues when computing the
+I had to modify it because of overflow issues when computing the
 product of all input values (n)
-second I had to add a function that computes the remainders (a) from bus lags
 '''
+from functools import reduce
 def chinese_remainder(n, a):
     sums = 0
-    prod = np.prod(n, dtype=np.int64)
+    prod = reduce(lambda a, b: a*b, n) # product of all elements in the list
     for n_i, a_i in zip(n, a):
         p = prod // n_i
         sums += a_i * mul_inv(p, n_i) * p
@@ -71,15 +69,6 @@ def mul_inv(a, b):
     if x1 < 0: x1 += b0
     return x1
 
-def correct_remainders(steps, lags):
-    for i, (step, lag) in enumerate(zip(steps, lags)):
-        if lag != 0:
-            if step < lag:
-                corrected_lag = (lag - np.floor(lag/step) * step)
-                lag = int(corrected_lag)
-            lags[i] = step - lag
-    return lags
-
 
 
 # part 1
@@ -88,6 +77,6 @@ buses, lags, best_bus, min_wait = part1(earliest, list_of_buses)
 print(f'Solution to part 1: {best_bus*min_wait}\n')
 
 # part 2
-remainder = correct_remainders(buses, lags)
+remainder = [bus - lag for bus, lag in zip(buses, lags)]
 p2 = chinese_remainder(buses, remainder)
 print(f'Solution to part 2: {p2} ')
