@@ -8,6 +8,7 @@ Created on Mon Dec 14 09:20:15 2020
 import re
 from itertools import product
 
+
 # =============================================================================
 # FUNCTIONS
 # =============================================================================
@@ -49,8 +50,13 @@ def apply_mask(value, mask_i, ver):
 
 
 
-def find_char(s, ch):
-    return [i for i, ltr in enumerate(s) if ltr == ch]
+def find_positions_of_char_in_string(string, char):
+    char_positions = []
+    for i, c in enumerate(string):
+        if c == char:
+            char_positions.append(i)
+    return char_positions
+    # return [i for i, c in enumerate(string) if c == char]
 
 
 def replace_char(s, ch, idx):
@@ -84,12 +90,12 @@ print(f'Solution to part 1: {p1}\n')
 # part 2
 program = {}
 for adress, value, mask_i in memory:
-    masked_value = apply_mask(adress, mask_i, ver=2)
-    xloc = find_char(masked_value, 'X') 
-    for combos in product('01', repeat=len(xloc)):
-        new_adress = masked_value
-        for c, pos in zip(combos, xloc):
-            new_adress = replace_char(new_adress, c, pos)
+    masked_adress = apply_mask(adress, mask_i, ver=2)
+    x_positions = find_positions_of_char_in_string(masked_adress, 'X') 
+    for sequence_of_01 in product('01', repeat=len(x_positions)):
+        new_adress = masked_adress
+        for ch, xpos in zip(sequence_of_01, x_positions):
+            new_adress = replace_char(new_adress, ch, xpos)
         program[int(new_adress, 2)] = value
 
 p2 = sum(program.values())
