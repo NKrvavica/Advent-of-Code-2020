@@ -68,6 +68,13 @@ def replace_char(s, ch, idx):
         return s[:idx] + ch + s[idx + 1:]    
     
 
+def replace_Xs_with_01(masked_adress, seq_of_01, x_positions):
+    new_adress = masked_adress
+    for char, xpos in zip(seq_of_01, x_positions):
+        new_adress = replace_char(new_adress, char, xpos)
+    return new_adress
+
+
 # =============================================================================
 # MAIN
 # =============================================================================
@@ -82,9 +89,7 @@ program = {}
 for adress, value, mask_i in memory:
     masked_value = apply_mask(value, mask_i, ver=1)
     program[adress] = int(masked_value, 2)
-
 p1 = sum(program.values())
-print(f'Solution to part 1: {p1}\n')
 
 
 # part 2
@@ -92,11 +97,11 @@ program = {}
 for adress, value, mask_i in memory:
     masked_adress = apply_mask(adress, mask_i, ver=2)
     x_positions = find_positions_of_char_in_string(masked_adress, 'X') 
-    for sequence_of_01 in product('01', repeat=len(x_positions)):
-        new_adress = masked_adress
-        for ch, xpos in zip(sequence_of_01, x_positions):
-            new_adress = replace_char(new_adress, ch, xpos)
+    for seq_of_01 in product('01', repeat=len(x_positions)):
+        new_adress = replace_Xs_with_01(masked_adress, seq_of_01, x_positions)
         program[int(new_adress, 2)] = value
-
 p2 = sum(program.values())
+
+
+print(f'Solution to part 1: {p1}\n')
 print(f'Solution to part 2: {p2}\n')
