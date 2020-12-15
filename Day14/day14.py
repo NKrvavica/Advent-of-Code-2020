@@ -7,6 +7,7 @@ Created on Mon Dec 14 09:20:15 2020
 
 import re
 from itertools import product
+from time import time
 
 
 # =============================================================================
@@ -34,7 +35,7 @@ def parse_input(data):
 
 
 def apply_mask(value, mask_i, ver):
-    bin_value = '{0:036b}'.format(value)
+    bin_value = f'{value:036b}'
     masked_value = []
     for v, m in zip(bin_value, masks[mask_i]):
         if m == 'X':
@@ -59,25 +60,34 @@ def find_positions_of_char_in_string(string, char):
     # return [i for i, c in enumerate(string) if c == char]
 
 
-def replace_char(s, ch, idx):
-    if idx < 0:  # add it to the beginning
-        return ch + s
-    elif idx > len(s):  # add it to the end
-        return s + ch
-    else:  # add inbetween
-        return s[:idx] + ch + s[idx + 1:]    
+# def replace_char(s, ch, idx):
+#     return s[:idx] + ch + s[idx + 1:]    
     
+# def replace_char1(s, ch, idx): # sporije
+#     return '%s%s%s'%(s[:idx], ch, s[idx + 1:])
+
+# def replace_char2(s, ch, idx): # sporije
+#     return ''.join([s[:idx], ch, s[idx+1:]])
+
+# def replace_char3(s, ch, idx): # sporije
+#     s_list = list(s)
+#     s_list[idx] = ch
+#     return ''.join(s_list)
+
 
 def replace_Xs_with_01(masked_adress, seq_of_01, x_positions):
     new_adress = masked_adress
     for char, xpos in zip(seq_of_01, x_positions):
-        new_adress = replace_char(new_adress, char, xpos)
+        # new_adress = replace_char(new_adress, char, xpos)
+        # replace 'X' with 0 or 1
+        new_adress = new_adress[:xpos] + char + new_adress[xpos + 1:]    
     return new_adress
 
 
 # =============================================================================
 # MAIN
 # =============================================================================
+msStart = int(time() * 1000)
 
 # laod and parse data
 data = load_input('input.txt')
@@ -105,3 +115,6 @@ p2 = sum(program.values())
 
 print(f'Solution to part 1: {p1}\n')
 print(f'Solution to part 2: {p2}\n')
+print(f'Run time: {int(time() * 1000) - msStart} ms')
+
+    
