@@ -12,14 +12,12 @@ import numpy as np
 
 @njit
 def play_the_game(given_numbers, end):
-    last_spoken = given_numbers[-1]
     spoken_numbers = {}
     for i, nr in enumerate(given_numbers):
         spoken_numbers[nr] = i+1
+    last_spoken = given_numbers[-1]
     for turn in range(len(given_numbers), end):
-        if last_spoken in spoken_numbers:
-            speak = turn - spoken_numbers[last_spoken]
-        else: speak = 0
+        speak = turn - spoken_numbers.get(last_spoken, turn)
         spoken_numbers[last_spoken] = turn
         last_spoken = speak
     return last_spoken
