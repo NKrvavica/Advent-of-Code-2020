@@ -7,8 +7,7 @@ Created on Tue Dec 15 08:40:39 2020
 
 from time import time
 from numba import njit
-import numpy as np
-
+from numba.typed import List
 
 @njit
 def play_the_game(given_numbers, end):
@@ -25,7 +24,7 @@ def play_the_game(given_numbers, end):
 
 msStart = time()
 
-given_numbers = np.array([8,0,17,4,1,12])
+given_numbers = List([8,0,17,4,1,12])
 last_spoken1 = play_the_game(given_numbers, 2020)
 last_spoken2 = play_the_game(given_numbers, 30000000)
 
