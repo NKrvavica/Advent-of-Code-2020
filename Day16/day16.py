@@ -77,11 +77,11 @@ def connect_values_with_ticket_fields(ticket_fields, valid_tickets):
 
 
 def define_my_ticket(valid_idx):
-    p2 = 1   
+    my_prod = 1   
     for key, idx in valid_idx.items():
         if key[:6] == 'depart':
-            p2 *= my_ticket[list(idx)[0]]
-    return p2
+            my_prod *= my_ticket[list(idx)[0]]
+    return my_prod
 
 
 # =============================================================================
@@ -92,8 +92,8 @@ data = load_input('input.txt')
 ticket_fields, my_ticket, nearby_tickets = parse_input(*data)
 valid_tickets, invalid_sum = find_valid_tickets(ticket_fields, nearby_tickets)
 valid_idx = connect_values_with_ticket_fields(ticket_fields, valid_tickets)
-p2 = define_my_ticket(valid_idx)
+my_prod = define_my_ticket(valid_idx)
 
 print(f'Solution to part 1: {invalid_sum}')
-print(f'Solution to part 2: {p2}')
+print(f'Solution to part 2: {my_prod}')
 print(f'Run time: {time() - msStart:.3f} s')
