@@ -55,7 +55,6 @@ def find_valid_tickets(ticket_fields, nearby_tickets):
     return valid_tickets, p1
 
 
-
 def connect_values_with_ticket_fields(ticket_fields, valid_tickets):
      # numpy, yay! I can just transpose the matrix
     valid_tickets = np.array(valid_tickets)
@@ -67,10 +66,10 @@ def connect_values_with_ticket_fields(ticket_fields, valid_tickets):
             if set(place).issubset(valid_nr):
                 valid_idx[key].add(nr)
     
-    # find which field value corresponds to which row
-    sorted_places = sorted(valid_idx.items(), key=lambda x: x[1])
+    # find which field value corresponds to which index
+    sorted_possibilities = sorted(valid_idx.items(), key=lambda x: x[1])
     not_it = set()
-    for key, value in sorted_places:
+    for key, value in sorted_possibilities:
         valid_idx[key] = valid_idx[key].difference(not_it)
         not_it.update(value)
     
