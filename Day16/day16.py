@@ -47,12 +47,12 @@ def parse_input(fields, my_ticket, nearby_tickets):
 def find_valid_tickets(ticket_fields, nearby_tickets):
     all_valid_field_values = set.union(*ticket_fields.values())
     valid_tickets = []
-    p1 = 0
+    invalid_sum = 0
     for ticket in nearby_tickets:
-        diff = list(set(ticket).difference(all_valid_field_values))
-        if diff: p1 += sum(diff)
+        not_posibru = list(set(ticket).difference(all_valid_field_values))
+        if not_posibru: invalid_sum += sum(not_posibru)
         else: valid_tickets.append(ticket)
-    return valid_tickets, p1
+    return valid_tickets, invalid_sum
 
 
 def connect_values_with_ticket_fields(ticket_fields, valid_tickets):
@@ -61,25 +61,25 @@ def connect_values_with_ticket_fields(ticket_fields, valid_tickets):
 
     # find which number indices are valid for each field
     valid_idx = defaultdict(set)
-    for nr, place in enumerate(valid_tickets.T):
-        for key, valid_nr in ticket_fields.items():
-            if set(place).issubset(valid_nr):
-                valid_idx[key].add(nr)
+    for idx, list_of_numbers in enumerate(valid_tickets.T):
+        for field, valid_range in ticket_fields.items():
+            if set(list_of_numbers).issubset(valid_range):
+                valid_idx[field].add(idx)
     
     # find which field value corresponds to which index
-    sorted_possibilities = sorted(valid_idx.items(), key=lambda x: x[1])
+    sorted_valid_idx = sorted(valid_idx.items(), key=lambda x: x[1])
     not_it = set()
-    for key, value in sorted_possibilities:
-        valid_idx[key] = valid_idx[key].difference(not_it)
-        not_it.update(value)
+    for field, idx in sorted_valid_idx:
+        valid_idx[field] = valid_idx[field].difference(not_it)
+        not_it.update(idx)
     
     return valid_idx
 
 
 def define_my_ticket(valid_idx):
     my_prod = 1   
-    for key, idx in valid_idx.items():
-        if key[:6] == 'depart':
+    for field, idx in valid_idx.items():
+        if field[:6] == 'depart':
             my_prod *= my_ticket[list(idx)[0]]
     return my_prod
 
@@ -87,6 +87,7 @@ def define_my_ticket(valid_idx):
 # =============================================================================
 # MAIN
 # =============================================================================
+
 msStart = time()
 data = load_input('input.txt')
 ticket_fields, my_ticket, nearby_tickets = parse_input(*data)
