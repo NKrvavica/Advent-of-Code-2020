@@ -62,10 +62,11 @@ def connect_values_with_ticket_fields(ticket_fields, valid_tickets):
     # find which number indices are valid for each field
     valid_idx = defaultdict(set)
     for idx, list_of_numbers in enumerate(valid_tickets.T):
+        set_of_numbers = set(list_of_numbers)
         for field, valid_range in ticket_fields.items():
-            if set(list_of_numbers).issubset(valid_range):
+            if set_of_numbers.issubset(valid_range):
                 valid_idx[field].add(idx)
-    
+
     # find which field value corresponds to which index
     sorted_valid_idx = sorted(valid_idx.items(), key=lambda x: x[1])
     not_it = set()
