@@ -37,18 +37,20 @@ def parse_math(expr):
 
 
 def advanced_math(zadatak):
-    '''evaluate a single expression inside brackets using advenced operation
+    '''evaluate a single expression inside brackets using advanced operation
     precedence'''
     nums, ops = parse_math(zadatak)   
     value = None
     for op in ADV_OP_ORDER:                   # Loop over operators in order of presedence
-        while any(o in ops for o in op):        # Operator with this precedence level exists
+        while op in ops:        # Operator with this precedence level exists
             idx, oo = next((i, o) for i, o in enumerate(ops) if o in op) # Next operator with this precedence         
             ops.pop(idx)                        # remove this operator from the operator list
             values = list(map(int, nums[idx: idx+2]))
             value = OPERATION[oo](*values)
             nums[idx:idx+2] = [value]           
+
     return nums[0]
+
 
 
 def simple_math(zadatak):
