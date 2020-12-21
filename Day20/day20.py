@@ -177,13 +177,16 @@ def connect_tiles(tiles, connections):
 
 
 def contruct_big_picture(tiles_positions, tiles_rotated):
+    nr_of_tiles = len(tiles_positions.keys())
+    rows_cols = int(np.sqrt(nr_of_tiles))  #number tiles in each row and colum
+    tlen = len(tiles_rotated[next(iter(tiles_rotated))]) # size of each tile in x and y dir
+    tln = tlen - 2 # size of each tiles without borders
     sorted_positions = sorted(tiles_positions.items(), key=lambda x: x[1])
-    big_pic = np.zeros((96, 96))
-    for i in range(12):
-        for j in range(12):
-            tile_id, pos = sorted_positions[i*12+j]
-            # print(tile_id)
-            big_pic[i*8:i*8+8, j*8:j*8+8] = tiles_rotated[tile_id][1:-1, 1:-1]
+    big_pic = np.zeros((rows_cols * tln, rows_cols * tln))
+    for i in range(rows_cols):
+        for j in range(rows_cols):
+            tile_id, pos = sorted_positions[i*rows_cols+j]
+            big_pic[i*tln:i*tln+tln, j*tln:j*tln+tln] = tiles_rotated[tile_id][1:-1, 1:-1]
     return big_pic
 
 
