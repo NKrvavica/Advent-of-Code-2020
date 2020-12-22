@@ -18,71 +18,64 @@ def load_input(fname):
 
 def deal_cards(player):
     name, cards_str = player.split(':\n')
-    cards = deque()
-    for card in cards_str.split('\n'):
-        cards.append(int(card))
-    return cards
+    return deque([int(card) for card in cards_str.split('\n')])
 
 
-def play_game(p1_deck, p2_deck):
-    while len(p1_deck)>0 and len(p2_deck)>0:
-        p1_card = p1_deck.popleft()
-        p2_card = p2_deck.popleft()
-        if p1_card > p2_card:
-            p1_deck.extend([p1_card, p2_card])
+def play_game(deck1, deck2):
+    while len(deck1)>0 and len(deck2)>0:
+        card1 = deck1.popleft()
+        card2 = deck2.popleft()
+        if card1 > card2:
+            deck1.extend([card1, card2])
         else:
-            p2_deck.extend([p2_card,p1_card])
-    return p1_deck, p2_deck, p1_deck > p2_deck
+            deck2.extend([card2, card1])
+    return deck1, deck2, deck1 > deck2
 
 
-def declare_winner(p1_deck, p2_deck, player1_won):
-    if player1_won:
-        winner_deck = p1_deck
-    else:
-        winner_deck = p2_deck
-    winner_deck.reverse(),
-    count = 0
-    for i, card in enumerate(winner_deck, 1):
-        count += i * card
-    return count
+def declare_winner(deck1, deck2, p1_won):
+    winner_deck = [deck2, deck1][p1_won]
+    winner_deck.reverse()
+    return sum([i*card for i, card in enumerate(winner_deck, 1)])
+
 
 player1, player2 = load_input('input.txt')
-p1_deck, p2_deck = deal_cards(player1), deal_cards(player2)
-p1_deck_f, p2_deck_f, player1_won = play_game(p1_deck.copy(), p2_deck.copy())
-part1 = declare_winner(p1_deck_f, p2_deck_f, player1_won)
+deck1, deck2 = deal_cards(player1), deal_cards(player2)
+deck1_f, deck2_f, p1_won = play_game(deck1.copy(), deck2.copy())
+part1 = declare_winner(deck1_f, deck2_f, p1_won)
 print(f'Solution to part 1: {part1}')
 
 
 # part 2
-def play_recursive_game(p1_deck, p2_deck):
-    p1_previous, p2_previous = [], []
-    while len(p1_deck)>0 and len(p2_deck)>0:
-        # print(p1_deck, p2_deck)
-        if (p1_deck in p1_previous) or (p2_deck in p2_previous):
-            return p1_deck, p2_deck, True
+def play_recursive_game(deck1, deck2):
+    deck1_seen, deck2_seen = [], []
+    while deck1 and deck2:
+        # print(deck1, deck2)
+        if (deck1 in deck1_seen) or (deck2 in deck2_seen):
+            return deck1, deck2, True
         else:
-            p1_previous.append(p1_deck.copy()), p2_previous.append(p2_deck.copy())
-            p1_card = p1_deck.popleft()
-            p2_card = p2_deck.popleft()
-            if (len(p1_deck) >= p1_card) and (len(p2_deck) >= p2_card):
+            deck1_seen.append(deck1.copy())
+            deck2_seen.append(deck2.copy())
+            card1, card2 = deck1.popleft(), deck2.popleft()
+            if (len(deck1) >= card1) and (len(deck2) >= card2):
                 # print(f'recursive game')
-                p1d, p2d, player1_won = play_recursive_game(deque(islice(p1_deck.copy(), 0, p1_card)),
-                                                            deque(islice(p2_deck.copy(), 0, p2_card)))
-                if player1_won == 1:
-                    p1_deck.extend([p1_card, p2_card])
+                card1_r = deque(islice(deck1, 0, card1))
+                card2_r = deque(islice(deck2, 0, card2))
+                p1d, p2d, p1_won = play_recursive_game(card1_r, card2_r)
+                if p1_won == 1:
+                    deck1.extend([card1, card2])
                 else:
-                    p2_deck.extend([p2_card,p1_card])
+                    deck2.extend([card2, card1])
             else:
-                if p1_card > p2_card:
-                    p1_deck.extend([p1_card, p2_card])
+                if card1 > card2:
+                    deck1.extend([card1, card2])
                 else:
-                    p2_deck.extend([p2_card,p1_card])
-    return p1_deck, p2_deck, p1_deck > p2_deck
+                    deck2.extend([card2, card1])
+    return deck1, deck2, deck1 > deck2
 
 msStart = time()
 
-p1_deck_f, p2_deck_f, player1_won = play_recursive_game(p1_deck.copy(), p2_deck.copy())
-part2 = declare_winner(p1_deck_f, p2_deck_f, player1_won)
+deck1_f, deck2_f, p1_won = play_recursive_game(deck1.copy(), deck2.copy())
+part2 = declare_winner(deck1_f, deck2_f, p1_won)
 print(f'Solution to part 2: {part2}')
 print(f'Run time: {time() - msStart:.2f} s')
 
