@@ -8,20 +8,18 @@ Created on Fri Dec 25 08:53:59 2020
 
 def determine_loop_size(key, subject=7, value=1, divide_by=20201227):
     i = 0
-    while True:
+    while value != key:
         i += 1
-        value *= subject
-        value = value % divide_by
-        if value == key:
-            print(f'loop size: {i}')
-            return i
+        value = (value * subject) % divide_by
+    return i
+       
         
 def determine_encription_key(subject, loop_size, value=1, divide_by=20201227):
     for i in range(loop_size):
-        value *= subject
-        value = value % divide_by
+        value = (value * subject) % divide_by
     return value
         
+
 card_public_key = 8184785
 door_public_key = 5293040
 
