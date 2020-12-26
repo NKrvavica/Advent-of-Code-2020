@@ -11,7 +11,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from time import time
 from numba import njit
-import numba
+from numba import boolean
 
 msStart = time()
 
@@ -58,45 +58,47 @@ print(f'Solution to part 1: {floor.sum()}')
 
 
 
-def get_boundaries(floor):
-    boundary = np.argwhere(floor)
-    down = boundary[:, 0].min() - 1
-    up = boundary[:, 0].max() + 1
-    left = boundary[:, 1].min() - 1
-    right = boundary[:, 1].max() + 1
-    return down, up, left, right
-
-
+boolean = 'bool'
 # @njit
 def living_art_exhibit(floor, days, max_len):
     
-    def sum_adjecent_tiles(floor, down, up, left, right):
-        sum_black = (0 + floor[down-1:up, left:right+1]
-                     + floor[down-1:up, left+1:right+2]
-                     + floor[down:up+1, left-1:right]
-                     + floor[down:up+1, left+1:right+2]
-                     + floor[down+1:up+2, left-1:right]
-                     + floor[down+1:up+2, left:right+1])
-        return sum_black
+    def vertical_boundaries(floor):
+        vertical_boundary = np.argwhere(floor)
+        down = vertical_boundary[:, 0].min() - 1
+        up = vertical_boundary[:, 0].max() + 1        
+        return down, up
 
+    def horizontal_boundaries(floor, i):
+        horizontal_boundary = np.argwhere(floor[i-1:i+2])
+        left = horizontal_boundary[:, 1].min() - 1
+        right = horizontal_boundary[:, 1].max() + 1
+        return left, right
+
+    def sum_adjecent_tiles(floor, i, j):
+        return (floor[i-1:i+2, j-1:j+2].sum()
+                - np.diag(floor[i-1:i+2, j-1:j+2]).sum())
 
     for day in range(days):        
         # new day, new floor
         new_floor = np.zeros(shape=(max_len, max_len),
-                             dtype='bool')  # this should be numba.boolean if njit is used
-        down, up, left, right = get_boundaries(floor)
-        black_tiles = sum_adjecent_tiles(floor, down, up, left, right)
-        # boolean mask for tiles that should remain or become black!
-        black_mask1 = floor[down:up+1, left:right+1] & (0 < black_tiles) & (black_tiles <= 2)
-        black_mask2 = (~floor[down:up+1, left:right+1]) & (black_tiles==2)
-        new_floor[down:up+1, left:right+1] = black_mask1 | black_mask2
+                             dtype=boolean)    
+        down, up = vertical_boundaries(floor)
+        for i, row in enumerate(floor[down:up+1], down):
+            left, right = horizontal_boundaries(floor, i)
+            for j, tile in enumerate(row[left:right+1], left):
+                black_tiles = sum_adjecent_tiles(floor, i, j)
+                if tile and 0 < black_tiles <= 2:
+                    new_floor[i, j] = True
+                elif not tile and black_tiles == 2:
+                    new_floor[i, j] = True    
+
         floor = new_floor
 
-    return floor, black_tiles
+    return floor
 
 
 # part 2
-floor, black_Tiles = living_art_exhibit(floor, days, max_len)
+floor = living_art_exhibit(floor, days, max_len)
 print(f'Solution to part 2: {floor.sum()}')
 print(f'Run time: {time() - msStart:.6f} s')
 
@@ -111,11 +113,12 @@ def pointy_hex_to_pixel(q, r, size=1):
 vertical_boundary = np.argwhere(floor)
 down = vertical_boundary[:, 0].min() - 1
 up = vertical_boundary[:, 0].max() + 1
-left = vertical_boundary[:, 1].min() - 1
-right = vertical_boundary[:, 1].max() + 1
 
 black_tiles, white_tiles = [], []
 for i, row in enumerate(floor[down:up+1], down):
+    horizontal_boundary = np.argwhere(floor[i-1:i+2])
+    left = horizontal_boundary[:, 1].min() - 1
+    right = horizontal_boundary[:, 1].max() + 1
     for j, tile in enumerate(row[left:right+1], left):
         if tile:
             black_tiles.append(pointy_hex_to_pixel(i, j))

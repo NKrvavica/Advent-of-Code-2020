@@ -6,9 +6,6 @@ Created on Thu Dec 24 09:38:10 2020
 """
 
 import re
-import math
-import matplotlib.pyplot as plt
-import numpy as np
 from time import time
 from numba import njit
 import numba
@@ -29,7 +26,7 @@ def parse_input(instructions):
 
 
 def turn_tiles(parsed_instruc):
-    floor = {}
+    floor = numba.typed.Dict()
     for instructions in parsed_instruc:
         x, y = 0, 0
         for instruc in instructions:
@@ -55,7 +52,6 @@ parsed_instruc, max_instruc_len = parse_input(instructions)
 # part 1
 floor = turn_tiles(parsed_instruc)
 print(f'Solution to part 1: {sum(floor.values())}')
-
 
 
 @njit
@@ -109,45 +105,9 @@ def living_art_exhibit(floor, days):
     return floor
 
 
-
 # part 2
-days = 3200
-floor2 = numba.typed.Dict()
-for key, value in floor.items():
-    floor2[key] = value
-floor = living_art_exhibit(floor2, days)
+days = 100
+floor = living_art_exhibit(floor, days)
 print(f'Solution to part 2: {sum(floor.values())}')
 print(f'Run time: {time() - msStart:.6f} s')
 
-
-# =============================================================================
-# PLOT
-# =============================================================================
-# def pointy_hex_to_pixel(q, r, size=1):
-#     x = size * (math.sqrt(3) * q  +  math.sqrt(3)/2 * r)
-#     y = size * (3/2 * r)
-#     return np.array([x, y])
-
-# vertical_boundary = np.argwhere(floor)
-# down = vertical_boundary[:, 0].min() - 1
-# up = vertical_boundary[:, 0].max() + 1
-
-# black_tiles, white_tiles = [], []
-# for i, row in enumerate(floor[down:up+1], down):
-#     horizontal_boundary = np.argwhere(floor[i-1:i+2])
-#     left = horizontal_boundary[:, 1].min() - 1
-#     right = horizontal_boundary[:, 1].max() + 1
-#     for j, tile in enumerate(row[left:right+1], left):
-#         if tile:
-#             black_tiles.append(pointy_hex_to_pixel(i, j))
-#         else:
-#             white_tiles.append(pointy_hex_to_pixel(i, j))
-
-# black_tiles = np.array(black_tiles)
-# white_tiles = np.array(white_tiles)
-
-# fig, ax = plt.subplots()
-# plt.scatter(white_tiles[:, 0], white_tiles[:, 1], s=30, c='w', edgecolors='k',
-#             marker='h', linewidth=0.1)
-# plt.scatter(black_tiles[:, 0], black_tiles[:, 1], s=30, c='k', marker='h')
-# ax.set_aspect('equal')
